@@ -6,13 +6,20 @@
     <title>EJS Template</title>
 </head>
 <body>
+    <h1>Add Student Data</h1>
     <form action="/addData" method="post">
+        <label for="id">Id: </label>
         <input type="text" name="id">
+        <label for="name">Name: </label>
         <input type="text" name="name">
+        <label for="subject">Subject: </label>
         <input type="text" name="subject">
+        <label for="city">City: </label>
         <input type="text" name="city">
         <button type="submit">Add</button>
     </form>
+
+    <h1>Show Student Data</h1>
     <table border="1" width="70%">
         <thead>
             <tr>
@@ -20,6 +27,7 @@
                 <th>Name</th>
                 <th>Subject</th>
                 <th>City</th>
+                <th colspan="2">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +37,10 @@
                     <td><%= el.name %></td>
                     <td><%= el.subject %></td>
                     <td><%= el.city %></td>
+                    <td>
+                        <a href="/editData/<%= el.id %>"><button>Edit</button></a>
+                        <a href="/deleteData/?id=<%= el.id %>"><button>Delete</button></a>
+                    </td>
                 </tr>
             <% }) %>
         </tbody>

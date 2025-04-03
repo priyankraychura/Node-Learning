@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task</title>
+</head>
+<body>
+    <form action="/editTask" method="post">
+        <input type="text" value="<%= singleTask.id %>" name="id" placeholder="Sr. no" hidden/>
+        <input type="text" value="<%= singleTask.task  %>" name="task" placeholder="Enter task" />
+        <select name="priority" id="">
+            <option value="high" <%= singleTask.priority == "high" ? "selected" : "" %>>High</option>
+            <option value="medium" <%= singleTask.priority == "medium" ? "selected" : "" %>>Medium</option>
+            <option value="low" <%= singleTask.priority == "low" ? "selected" : "" %>>Low</option>
+        </select>
+        <button>Update Task</button>
+    </form>
+</body>
+</html>
