@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>EJS Template</title>
 </head>
 <body>
-    <h1>Add Student Data</h1>
     <form action="/addData" method="post">
+        <h1>Add Student Data</h1>
         <label for="id">Id: </label>
         <input type="text" name="id">
         <label for="name">Name: </label>
@@ -19,8 +20,7 @@
         <button type="submit">Add</button>
     </form>
 
-    <h1>Show Student Data</h1>
-    <table border="1" width="70%">
+    <table>
         <thead>
             <tr>
                 <th>Id</th>

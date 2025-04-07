@@ -2,19 +2,26 @@ const express = require("express")
 const port = 1008;
 
 const app = express();
+const path = require("path");
 
 app.set("view engine", "ejs")
 app.use(express.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, "public")));
 
 let students = [
     {id: 1, name: "Priyank", subject: "React", city: "Rajkot"}
 ]
 
+const middle = (req, res, next) => {
+    req.body.name = "Hacked";
+    next();
+}
+
 app.get("/", (req, res) => {
     res.render("index", {students})
 })
 
-app.post("/addData", (req, res) => {
+app.post("/addData", middle, (req, res) => {
     students.push(req.body)
     res.redirect("/");
 })
