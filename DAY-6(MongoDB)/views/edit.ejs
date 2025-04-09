@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=4, initial-scale=1.0">
+    <link rel="stylesheet" href="edit.css">
+    <title>Edit</title>
+</head>
+<body>
+    <h1>Edit Student Data</h1>
+    <form action="/updateData" method="post">
+        <input type="text" value="<%= singleUser.id %>" name="id" hidden>
+        <label for="name">Name: </label>
+        <input type="text" value="<%= singleUser.name %>" name="name">
+        <label for="subject">Subject: </label>
+        <input type="text" value="<%= singleUser.subject %>" name="subject">
+        <label for="city">City: </label>
+        <input type="text" value="<%= singleUser.city %>" name="city">
+        <button type="submit">Add</button>
+    </form>
+</body>
+</html>

@@ -1,6 +1,8 @@
 const express = require("express")
 const port = 1008;
 const path = require("path");
+const schema = require("./model/firstSchema")
+
 
 const app = express();
 const db = require("./config/db");
@@ -9,22 +11,20 @@ app.set("view engine", "ejs")
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, "public")));
 
-let students = [
-    {id: 1, name: "Priyank", subject: "React", city: "Rajkot"}
-]
+// let students = [
+//     {id: 1, name: "Priyank", subject: "React", city: "Rajkot"}
+// ]
 
-const middle = (req, res, next) => {
-    req.body.name = "Hacked";
-    next();
-}
-
-app.get("/", (req, res) => {
-    res.render("index", {students})
+app.get("/", async (req, res) => {
+    await schema.find({}).then((students) => {
+        res.render('index', {students})
+    } )
 })
 
-app.post("/addData", middle, (req, res) => {
-    students.push(req.body)
-    res.redirect("/");
+app.post("/addData", async (req, res) => {
+    await schema.create(req.body).then(() => {
+        res.redirect("/")
+    })
 })
 
 app.get("/deleteData", (req, res) => {

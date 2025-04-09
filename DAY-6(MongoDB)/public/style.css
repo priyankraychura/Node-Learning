@@ -1,0 +1,116 @@
+/* General Reset & Base Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Layout Flexbox */
+.layout {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 30px;
+}
+
+/* Form Styling */
+form {
+    background-color: #1e1e1e;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 500px;
+    margin: 0 auto 40px auto;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    flex: 0 0 40%;
+}
+
+form h1 {
+    text-align: center;
+    color: #00bcd4;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #f5f5f5;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #f0f0f0;
+}
+
+/* Button Styling */
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #00bcd4;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0097a7;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1e1e1e;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    flex: 1;
+    overflow-x: auto;
+}
+
+th, td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    background-color: #292929;
+    color: #00bcd4;
+}
+
+td {
+    color: #ddd;
+}
+
+a button {
+    margin: 0 5px;
+    padding: 8px 16px;
+    background-color: #5c6bc0;
+}
+
+a button:hover {
+    background-color: #3f51b5;
+}
+
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    form, table {
+        width: 100%;
+    }
+}

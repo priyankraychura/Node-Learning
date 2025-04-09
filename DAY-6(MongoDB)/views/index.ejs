@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>EJS Template</title>
+</head>
+<body>
+    <div class="layout">
+        <form action="/addData" method="post">
+            <h1>Add Student Data</h1>
+            <label for="id">Id: </label>
+            <input type="text" name="id">
+            <label for="name">Name: </label>
+            <input type="text" name="name">
+            <label for="subject">Subject: </label>
+            <input type="text" name="subject">
+            <label for="city">City: </label>
+            <input type="text" name="city">
+            <button type="submit">Add</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Subject</th>
+                    <th>City</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% students.map((el, i) => { %>
+                    <tr>
+                        <td><%= el._id.toString().slice(-5) %></td>
+                        <td><%= el.name %></td>
+                        <td><%= el.subject %></td>
+                        <td><%= el.city %></td>
+                        <td>
+                            <a href="/editData/<%= el.id %>"><button>Edit</button></a>
+                            <a href="/deleteData/?id=<%= el.id %>"><button>Delete</button></a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
