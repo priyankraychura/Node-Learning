@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <h1>📚 Book List</h1>
+        </div>
+        <div class="nav-right">
+            <a href="/addBook" class="add-button">➕ Add Book</a>
+        </div>
+    </nav>
+
+    <!-- Card List -->
+    <div class="wrapper">
+        <% books.map((book) => { %>
+            <div class="card">
+                <img src="<%= book.image %>" alt="Book Cover" class="book-image">
+                <div class="card-details">
+                    <p class="book-id">ID: <%= book._id.toString().slice(-5) %></p>
+                    <h2 class="book-title"><%= book.title.slice(0, 26) %>...</h2>
+                    <p class="book-author">by <%= book.author %></p>
+                    <p class="book-description"><%= book.description.slice(0, 80) %>...</p>
+                    <p class="book-price">Price: ₹<%= book.price %></p>
+                    <div class="actions">
+                        <a href="/editBook/<%= book._id %>">Edit</a>
+                        <a href="/deleteBook/<%= book._id %>">Delete</a>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</body>
+</html>
