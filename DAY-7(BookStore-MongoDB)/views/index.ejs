@@ -24,7 +24,7 @@
                 <img src="<%= book.image %>" alt="Book Cover" class="book-image">
                 <div class="card-details">
                     <p class="book-id">ID: <%= book._id.toString().slice(-5) %></p>
-                    <h2 class="book-title"><%= book.title.slice(0, 26) %>...</h2>
+                    <h2 class="book-title"><%= book.title.slice(0, 20) %>...</h2>
                     <p class="book-author">by <%= book.author %></p>
                     <p class="book-description"><%= book.description.slice(0, 80) %>...</p>
                     <p class="book-price">Price: ₹<%= book.price %></p>

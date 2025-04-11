@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Book</title>
     <link rel="stylesheet" href="/editBook.css">
 </head>
+
 <body>
     <div class="form-container">
+        <img src="<%= singleBook.image %>" alt="">
         <form action="/editBook" method="post" class="book-form">
             <h2>Edit Book</h2>
             <input type="hidden" name="id" value="<%= singleBook._id %>" />
@@ -27,8 +30,12 @@
             <label>Price</label>
             <input type="text" name="price" value="<%= singleBook.price %>" placeholder="Price">
 
-            <button type="submit">Update Book</button>
+            <div class="actions">
+                <a href="/"><button class="cancel">Cancel</button></a>
+                <button type="submit">Update Book</button>
+            </div>
         </form>
     </div>
 </body>
+
 </html>
