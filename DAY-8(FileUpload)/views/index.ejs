@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <% students.map((el, i) => { %>
+        <img src="<%= el.image %>" alt="<%= el.image %>">
+    <% }) %>
+    <form action="/addData" method="post" enctype="multipart/form-data">
+        <input type="file" name="image">
+        <button type="submit">Add file</button>
+    </form>
+</body>
+</html>
