@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edit</title>
+</head>
+<body>
+    <img src="\<%= singleUser.image %>" alt="<%= singleUser.image %>">
+    <form action="/updateData" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="<%= singleUser.id %>">
+        <input type="file" name="image" id="">
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

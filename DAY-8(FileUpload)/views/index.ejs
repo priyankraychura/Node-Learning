@@ -6,9 +6,29 @@
     <title>Document</title>
 </head>
 <body>
-    <% students.map((el, i) => { %>
-        <img src="<%= el.image %>" alt="<%= el.image %>">
-    <% }) %>
+    <table border="1" width="70%">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% students.map((el, i) => { %>
+            <tr>
+                <td><%= el.id %></td>
+                <td><img width="150px" src="/<%= el.image %>" alt="<%= el.image %>"></td>
+                <td>
+                    <a href="/deleteData?id=<%= el.id %>"><button>Delete</button></a>
+                    <a href="/editData/<%= el.id %>"><button>Edit</button></a>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+        
+       
     <form action="/addData" method="post" enctype="multipart/form-data">
         <input type="file" name="image">
         <button type="submit">Add file</button>
