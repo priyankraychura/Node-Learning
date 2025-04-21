@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/editMovie" method="post" enctype="multipart/form-data">
+        <img src="/<%= singleMovie.poster %>" width="150px" alt="<%= singleMovie.poster %>">
+        <input type="hidden" value="<%= singleMovie.id %>" name="id">
+        <input type="file" name="poster">
+        <label for="">Title</label>
+        <input type="text" value="<%= singleMovie.title %>" name="title">
+        <label for="">Dimentions</label>
+        <input type="text" value="<%= singleMovie.dimentions %>" name="dimentions">
+        <label for="">Languages</label>
+        <input type="text" value="<%= singleMovie.languages %>" name="languages">
+        <label for="">Duration</label>
+        <input type="text" value="<%= singleMovie.duration %>" name="duration">
+        <label for="">Genere</label>
+        <input type="text" value="<%= singleMovie.genere %>" name="genere">
+        <label for="">Date</label>
+        <input type="date" value="<%= singleMovie.date %>" name="date">
+        <button type="submit">Add movie</button>
+    </form>
+</body>
+</html>
