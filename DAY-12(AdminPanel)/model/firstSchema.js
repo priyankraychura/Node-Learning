@@ -5,24 +5,24 @@ const schema = mongoose.Schema({
         type: String,
         required: false
     },
-    name: {
+    fname: {
+        type: String,
+        required: false
+    },
+    lname: {
         type: String,
         required: true
     },
-    age: {
+    email: {
         type: String,
         required: true
     },
-    city: {
-        type: String,
-        required: true
-    },
-    gender: {
+    password: {
         type: String,
         required: true
     }
 })
 
-const firstSchema = mongoose.model("NewStudent", schema);
+const firstSchema = mongoose.model("Admin", schema);
 
 module.exports = firstSchema
