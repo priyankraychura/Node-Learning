@@ -2,8 +2,16 @@ const firstSchema = require('../model/firstSchema');
 const schema = require('../model/firstSchema');
 const fs = require('fs')
 
-module.exports.dashboard = (req, res) => {
-    res.render('index')
+module.exports.loginPage = (req, res) => {
+    res.render('login')
+}
+
+module.exports.dashboard = (req, res) => {    
+    if(req.cookies.admin) {
+        res.render('index')
+    } else {
+        res.redirect('/')
+    }
 }
 
 module.exports.addAdmin = (req, res) => {
@@ -52,4 +60,23 @@ module.exports.updateAdmin = async (req, res) => {
     await firstSchema.findByIdAndUpdate(req.body.id, req.body).then(() => {
         res.redirect('/viewAdmin')
     })
+}
+
+module.exports.loginAdmin = async (req, res) => {
+    let admin = await firstSchema.findOne({email: req.body.email});
+
+    if(!admin) {
+        return res.redirect('/')
+    } 
+    if(req.body.password == admin.password) {
+        res.cookie("admin", admin)
+        res.redirect('/dashboard')
+    } else {
+        res.redirect("/")
+    }
+}
+
+module.exports.logout = (req, res) => {
+    res.clearCookie("admin")
+    res.redirect('/')    
 }
