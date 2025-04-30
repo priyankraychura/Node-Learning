@@ -6,7 +6,7 @@ const app = express();
 const db = require('./config/db')
 const cookie = require('cookie-parser');
 const passport = require('passport');
-const session = requrie('express-session');
+const session = require('express-session');
 
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))

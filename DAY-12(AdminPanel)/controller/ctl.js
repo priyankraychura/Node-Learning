@@ -6,12 +6,8 @@ module.exports.loginPage = (req, res) => {
     res.render('login')
 }
 
-module.exports.dashboard = (req, res) => {    
-    if(req.cookies.admin) {
-        res.render('index')
-    } else {
-        res.redirect('/')
-    }
+module.exports.dashboard = (req, res) => {
+    res.render('index')
 }
 
 module.exports.addAdmin = (req, res) => {
@@ -20,13 +16,13 @@ module.exports.addAdmin = (req, res) => {
 
 module.exports.viewAdmin = async (req, res) => {
     await firstSchema.find({}).then((data) => {
-        res.render('viewAdmin', {data})
+        res.render('viewAdmin', { data })
     })
 }
 
 module.exports.addAdminData = async (req, res) => {
     req.body.profile = req.file.path
-    
+
     await firstSchema.create(req.body).then(() => {
         res.redirect('/viewAdmin');
     })
@@ -34,7 +30,7 @@ module.exports.addAdminData = async (req, res) => {
 
 module.exports.deleteAdmin = async (req, res) => {
     await firstSchema.findById(req.params.id).then((singleData) => {
-        fs.unlinkSync(singleData.profile);        
+        fs.unlinkSync(singleData.profile);
     })
 
     await firstSchema.findByIdAndDelete(req.params.id).then(() => {
@@ -44,7 +40,7 @@ module.exports.deleteAdmin = async (req, res) => {
 
 module.exports.editAdmin = async (req, res) => {
     await firstSchema.findById(req.params.id).then((singleData) => {
-        res.render("editAdmin", {singleData});       
+        res.render("editAdmin", { singleData });
     })
 }
 
@@ -52,31 +48,22 @@ module.exports.updateAdmin = async (req, res) => {
     let singleData = await firstSchema.findById(req.body.id);
 
     let img = '';
-    
+
     req.file ? img = req.file.path : img = singleData.profile
     req.body.profile = img
     req.file && fs.unlinkSync(singleData.profile)
-    
+
     await firstSchema.findByIdAndUpdate(req.body.id, req.body).then(() => {
         res.redirect('/viewAdmin')
     })
 }
 
 module.exports.loginAdmin = async (req, res) => {
-    let admin = await firstSchema.findOne({email: req.body.email});
+    res.redirect('/dashboard')
 
-    if(!admin) {
-        return res.redirect('/')
-    } 
-    if(req.body.password == admin.password) {
-        res.cookie("admin", admin)
-        res.redirect('/dashboard')
-    } else {
-        res.redirect("/")
-    }
 }
 
 module.exports.logout = (req, res) => {
-    res.clearCookie("admin")
-    res.redirect('/')    
+    req.session.destroy();
+    res.redirect('/')
 }
