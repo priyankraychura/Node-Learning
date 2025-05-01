@@ -7,6 +7,7 @@ module.exports.loginPage = (req, res) => {
 }
 
 module.exports.dashboard = (req, res) => {
+    req.flash("success", "Logged in successfully!")
     res.render('index')
 }
 
