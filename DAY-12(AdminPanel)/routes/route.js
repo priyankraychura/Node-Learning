@@ -14,5 +14,10 @@ route.get("/editAdmin/:id", passport.checkAuth, ctl.editAdmin)
 route.post("/updateAdmin", passport.checkAuth, multer, ctl.updateAdmin)
 route.post("/loginAdmin", passport.authenticate("local", {failureFlash: "/"}), ctl.loginAdmin);
 route.get("/logout", passport.checkAuth, ctl.logout)
+route.get('/changePassword', passport.checkAuth, ctl.changePassword)
+route.post('/changePass', passport.checkAuth, ctl.changePass);
+route.get('/varifyPass', ctl.varifyPassword)
+route.post("/lostPass", ctl.lostPass);
+route.post("/varifyOTP", ctl.varifyPass);
 
 module.exports = route;
