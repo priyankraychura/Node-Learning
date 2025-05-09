@@ -69,6 +69,10 @@ module.exports.logout = (req, res) => {
     res.redirect('/')
 }
 
+module.exports.profile = (req, res) => {
+    res.render('profile')
+}
+
 module.exports.changePassword = (req, res) => {
     res.render('changePass')
 }
