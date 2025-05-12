@@ -36,6 +36,7 @@ app.use(flash.setFlash)
 
 app.use('/', require('./routes/route'))
 app.use('/category', require('./routes/category'))
+app.use('/subcategory', require('./routes/subCategory'))
 
 
 app.listen(port, (err) => {
