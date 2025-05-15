@@ -36,6 +36,7 @@ passport.deserializeUser( async (adminId, done) => {
 
 passport.checkAuth = (req, res, next) => {
     if(req.isAuthenticated()) {
+        res.locals.admin = req.user
         next();
     } else {
         res.redirect('/')

@@ -7,6 +7,8 @@ const db = require('./config/db')
 const passport = require('passport');
 const session = require('express-session')
 const cookie = require('cookie-parser');
+const flash = require('./middleware/flash');
+const connectFlash = require('connect-flash');
 
 app.set('view engine', 'ejs')
 app.use(express.static(path.join(__dirname, 'public')))
@@ -25,7 +27,13 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+app.use(connectFlash())
+app.use(flash.setFlash)
+
 app.use('/', require('./routes/route'))
+app.use('/category', require('./routes/category'))
+app.use('/subcategory', require('./routes/subCat'))
+app.use('/product', require('./routes/product'))
 
 app.listen(port, (err) => {
     if(err)  {

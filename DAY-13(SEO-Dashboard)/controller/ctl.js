@@ -1,5 +1,6 @@
 const adminSchema = require('../models/adminSchema')
 const fs = require('fs')
+const nodemailer = require('../middleware/nodeMailer');
 
 module.exports.dashboard = async (req, res) => {
     await adminSchema.find({}).then((admins) => {
@@ -13,10 +14,6 @@ module.exports.loginPage = (req, res) => {
 
 module.exports.registerPage = (req, res) => {
     res.render('register')
-}
-
-module.exports.addData = (req, res) => {
-    res.render('forms')
 }
 
 module.exports.register = async (req, res) => {
@@ -37,6 +34,7 @@ module.exports.deleteAdmin = async (req, res) => {
 }
 
 module.exports.login = async (req, res) => {
+    req.flash("success", "Logged in successfully!");
     res.redirect('/dashboard')
 }
 
@@ -62,4 +60,79 @@ module.exports.update = async (req, res) => {
     await adminSchema.findByIdAndUpdate(req.body.id, req.body).then(() => {
         res.redirect('/dashboard');
     })
+}
+
+module.exports.profile = (req, res) => {
+    res.render('profile')
+}
+
+module.exports.forgotPass = (req, res) => {
+    res.render('forgotPass');
+}
+
+module.exports.otpPage = (req, res) => {
+    res.render('varifyOTP')
+}
+
+module.exports.forgotPassword = async (req, res) => {
+    let admin = await adminSchema.findOne({ email: req.body.email })
+
+    if(!admin) {
+        return res.redirect('/')
+    }
+
+    let otp = Math.floor(Math.random() * 100000 + 900000)
+    nodemailer.sendOTP(req.body.email, otp)
+
+    req.session.otp = otp
+    req.session.adminData = admin
+
+    req.flash("error", "OTP has been successfully sent to your email!");
+    res.redirect('/varifyOTP')
+}
+
+module.exports.varifyOTP = async (req, res) => {
+    let otp = req.session.otp
+    let admin = req.session.adminData
+
+    if(otp == req.body.otp) {
+        if(req.body.pass == req.body.cnfPass) {
+            await adminSchema.findByIdAndUpdate(admin._id, { password: req.body.pass }).then(() => {
+                res.redirect('/');
+            })
+        } else {
+            req.flash("error", "New password and confirm password should be same!");
+            res.redirect('/varifyOTP')
+        }
+    } else {
+        req.flash("error", "Incorrect OTP!");
+        res.redirect('/varifyOTP')
+    }
+}
+
+module.exports.changePass = (req, res) => {
+    res.render('changePass');
+}
+
+module.exports.changePassword = async (req, res) => {
+    let admin = req.user;
+
+    if(admin.password == req.body.oldPass) {
+        if(admin.password != req.body.newPass) {
+            if(req.body.newPass == req.body.cnfPass) {
+                await adminSchema.findByIdAndUpdate(admin.id, { password: req.body.newPass}).then(() => {
+                    res.redirect('/');
+                })
+            } else {
+                req.flash("error", "New password and confirm password does not metch");
+                res.redirect('/changePass')
+            }
+        } else {
+            req.flash("error", "New password cannot be same as existing password");
+            res.redirect('/changePass')
+        }
+    } else {
+        req.flash("error", "Incorrect Old Password!");
+        res.redirect('/changePass')
+    }
 }
