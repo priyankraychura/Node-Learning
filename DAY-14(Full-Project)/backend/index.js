@@ -10,6 +10,7 @@ app.use(express.json())
 app.use(cors())
 
 app.use('/', require('./routes/route'))
+app.use('/', require('./routes/LoginRegister'))
 
 app.listen(PORT, (err) => {
     if(err) {
