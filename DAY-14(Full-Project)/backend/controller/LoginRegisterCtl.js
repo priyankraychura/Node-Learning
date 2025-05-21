@@ -1,5 +1,6 @@
 const schema = require('../model/userSchema')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 module.exports.registerAdmin = async (req, res) => {
     let admin = await schema.findOne({ email: req.body.email })
@@ -20,5 +21,17 @@ module.exports.loginAdmin = async (req, res) => {
     
     if(!admin) {
         return res.status(200).json({ msg: "User does not exists", code: 100});
+    }
+
+    console.log(req.body);
+    
+
+    if(await bcrypt.compare(req.body.pass, admin.password)) {
+        let token = jwt.sign({admin}, "qwert", {expiresIn: "1h"})
+
+        return res.status(200).json({ msg: "User successfully loggedIn", token: token });
+        
+    } else {
+        return res.status(200).json({ msg: "Incorrect password", code: 100});
     }
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -14,6 +14,9 @@ export default function Login() {
             
             if(res.data.code) {
                 navigate('/register')
+            } else {
+                localStorage.setItem("token", res.data.token);
+                navigate('/dashboard')
             }
         })
         setEmail("")
@@ -28,6 +31,8 @@ export default function Login() {
             <input type="text" value={pass} onChange={(e) => setPass(e.target.value)} placeholder='Enter password' />
 
             <button onClick={onLogin}>Login</button>
+
+            <Link to={"register"}>Register</Link>
         </div>
     )
 }
