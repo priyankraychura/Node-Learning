@@ -1,0 +1,23 @@
+Admin Manager Employee
+
+1. Create admin
+2. Login admin
+3. View profile
+4. Change password
+5. Forgot password
+6. Create manager 
+11. Active/deactivate manager
+18. Active/deactivate employee
+
+7. Manager login
+8. View profile
+9. Change password
+10. Forgot password
+12. Create employee
+17. Active/Deactivate employee
+
+13. Employee Login
+14. View profile
+15. Change password
+16. Forgot password
+

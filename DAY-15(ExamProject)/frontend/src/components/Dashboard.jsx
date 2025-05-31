@@ -1,6 +1,5 @@
 import axios from 'axios';
-import React from 'react'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
@@ -10,25 +9,25 @@ export default function Dashboard() {
     if(!localStorage.getItem("token")) {
       navigate('/')
     } else {
-      fetchData()
+      fetchAllData();
     }
   }, [])
 
-  const fetchData = async () => {
-    await axios.get("http://localhost:1008/getAllAdmin", {
+  const fetchAllData = async () => {
+    await axios.get("http://localhost:1008/getAllData", {
       headers: {
         Authorization: localStorage.getItem("token")
       }
     }).then((res) => {
-      console.log(res)
+      console.log(res);
     })
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/")
+    localStorage.removeItem("token")
+    navigate('/')
   }
-  
+
   return (
     <div>
       <h1>Dashboard</h1>

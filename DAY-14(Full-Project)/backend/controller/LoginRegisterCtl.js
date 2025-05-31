@@ -35,3 +35,9 @@ module.exports.loginAdmin = async (req, res) => {
         return res.status(200).json({ msg: "Incorrect password", code: 100});
     }
 }
+
+module.exports.getAllAdmin = async (req, res) => {
+    await schema.find({}).then((data) => {
+        return res.status(200).json({ data: data })
+    })
+}
