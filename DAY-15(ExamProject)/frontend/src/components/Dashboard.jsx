@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import '../styles/Dashboard.css'
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -23,15 +24,20 @@ export default function Dashboard() {
     })
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    navigate('/')
-  }
-
   return (
     <div>
       <h1>Dashboard</h1>
-      <button onClick={handleLogout}>Logout</button>
+      <form action="">
+        <label htmlFor="">Title</label>
+        <input type="text" />
+        <label htmlFor="">Image</label>
+        <input type="file" name="" id="" />
+        <label htmlFor="">Description</label>
+        <input type="text" />
+        <label htmlFor="">Price</label>
+        <input type="text" />
+        <button type="submit">Add Product</button>
+      </form>
     </div>
   )
 }

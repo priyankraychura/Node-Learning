@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details - Hostel Management</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Reusing dashboard layout styles -->
+    <style>
+        .dashboard-container { display: flex; min-height: 100vh; background-color: var(--primary-bg); }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); padding: 20px; display: flex; flex-direction: column; transition: width 0.3s ease; box-shadow: 2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; }
+        .sidebar.collapsed { width: 80px; }
+        .sidebar.collapsed .sidebar-header .logo-text, .sidebar.collapsed .nav-link-text, .sidebar.collapsed .user-profile-sidebar .user-info { display: none; }
+        .sidebar.collapsed .nav-link { justify-content: center; }
+        .sidebar.collapsed .sidebar-header .logo { margin-right: 0; }
+        .sidebar.collapsed .user-profile-sidebar { padding: 15px 0; }
+        .sidebar.collapsed .user-profile-sidebar .avatar { margin-right: 0; }
+        .sidebar-header { display: flex; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header .logo { width: 40px; height: 40px; background-color: var(--accent-primary); color: var(--sidebar-bg); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius); margin-right: 10px; font-weight: bold; font-size: 1.2rem; }
+        .sidebar-header .logo svg { width: 24px; height: 24px; }
+        .sidebar-header .logo-text { font-size: 1.4rem; font-weight: 600; color: var(--text-primary); }
+        .sidebar-nav { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+        .nav-item { margin-bottom: 10px; }
+        .nav-link { display: flex; align-items: center; padding: 12px 15px; color: var(--text-secondary); border-radius: var(--border-radius); transition: background-color 0.2s ease, color 0.2s ease; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { background-color: var(--accent-primary); color: #fff; }
+        .nav-link.active { background-color: var(--accent-gradient) !important; color: #fff !important; }
+        .nav-link .icon { margin-right: 15px; width: 20px; height: 20px; }
+        .sidebar.collapsed .nav-link .icon { margin-right: 0; }
+        .user-profile-sidebar { margin-top: auto; padding: 15px; border-top: 1px solid var(--border-color); display: flex; align-items: center; }
+        .user-profile-sidebar .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: var(--accent-secondary); margin-right: 10px; background-size: cover; background-position: center; }
+        .user-profile-sidebar .user-info .name { font-weight: 500; color: var(--text-primary); font-size: 0.9rem; }
+        .user-profile-sidebar .user-info .role { font-size: 0.8rem; color: var(--text-secondary); }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--primary-bg); }
+        .header-bar { background-color: var(--header-bg); padding: 0 25px; height: 70px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid var(--border-color); }
+        .header-left .sidebar-toggle-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.5rem; padding: 5px; }
+        .header-left .sidebar-toggle-btn:hover { color: var(--accent-primary); }
+        .header-right { display: flex; align-items: center; }
+        .notification-icon, .profile-dropdown .profile-icon-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.4rem; margin-left: 20px; cursor: pointer; position: relative; padding: 5px; }
+        .notification-icon:hover, .profile-dropdown .profile-icon-btn:hover { color: var(--accent-primary); }
+        .notification-icon .badge { position: absolute; top: 0px; right: 0px; width: 8px; height: 8px; background-color: var(--button-danger-bg); border-radius: 50%; border: 1px solid var(--header-bg); }
+        .profile-dropdown { position: relative; }
+        .profile-avatar { width: 40px; height: 40px; border-radius: 50%; margin-left: 15px; cursor: pointer; background-color: var(--accent-primary); background-size: cover; background-position: center; border: 2px solid var(--border-color); }
+        .dropdown-menu { display: none; position: absolute; top: 60px; right: 0; background-color: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--shadow-md); width: 200px; z-index: 100; border: 1px solid var(--border-color); }
+        .profile-dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-menu a, .dropdown-menu button { display: block; padding: 10px 15px; color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; background: none; border: none; width: 100%; text-align: left; cursor: pointer; }
+        .dropdown-menu a .icon, .dropdown-menu button .icon { margin-right: 10px; width: 16px; height: 16px; }
+        .dropdown-menu a:hover, .dropdown-menu button:hover { background-color: var(--secondary-bg); color: var(--accent-primary); }
+        .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 5px 0; }
+        .page-content { padding: 25px; flex-grow: 1; overflow-y: auto; }
+        .page-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .page-header h1 { font-size: 1.8rem; color: var(--text-primary); margin:0; }
+        .feather { width: 1em; height: 1em; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; vertical-align: middle; }
+
+        /* Student Details Specific Styles */
+        .student-details-card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+        }
+
+        .student-profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .student-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: var(--accent-primary); /* Placeholder */
+            margin-right: 25px;
+            /* background-image: url('path/to/student-avatar.jpg'); */
+            background-size: cover;
+            background-position: center;
+            border: 3px solid var(--accent-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--primary-bg);
+            font-weight: bold;
+        }
+
+        .student-info-header h2 {
+            font-size: 1.7rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .student-info-header p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+        .student-info-header .student-id {
+            font-size: 0.9rem;
+            color: var(--accent-primary);
+        }
+
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            background-color: var(--secondary-bg);
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        .detail-item strong {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item span {
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        .detail-item .status {
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status.active { background-color: #28a74520; color: #28a745; border: 1px solid #28a74580;} /* Greenish */
+        .status.inactive { background-color: #dc354520; color: #dc3545; border: 1px solid #dc354580;} /* Reddish */
+
+
+        .actions-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: right;
+        }
+        .actions-footer .btn {
+            margin-left: 10px;
+        }
+         .actions-footer .btn-secondary {
+            background-color: var(--secondary-bg);
+        }
+        .actions-footer .btn-secondary:hover {
+            background-color: #38426e;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </div>
+                <span class="logo-text">HostelPanel</span>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="dashboard_layout.html" class="nav-link">
+                        <svg class="icon feather feather-grid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <span class="nav-link-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="table_page.html" class="nav-link active"> <!-- Active since we are viewing a student from the list -->
+                        <svg class="icon feather feather-users" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span class="nav-link-text">Students</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="add_user_page.html" class="nav-link">
+                        <svg class="icon feather feather-user-plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="23" y1="11" x2="23" y2="17"></line><line x1="20" y1="14" x2="26" y2="14"></line></svg>
+                        <span class="nav-link-text">Add Student</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg class="icon feather feather-settings" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <span class="nav-link-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="user-profile-sidebar">
+                <div class="avatar" style="background-image: url('https://via.placeholder.com/80/8a2be2/ffffff?text=A');"></div>
+                <div class="user-info">
+                    <span class="name">Admin User</span>
+                    <span class="role">Super Admin</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="header-bar">
+                <div class="header-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle">
+                        <svg class="feather feather-menu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div class="header-right">
+                    <button class="notification-icon">
+                        <svg class="feather feather-bell" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span class="badge"></span>
+                    </button>
+                    <div class="profile-dropdown">
+                        <div class="profile-avatar" style="background-image: url('https://via.placeholder.com/80/00bcd4/1a1f36?text=AU');"></div>
+                        <div class="dropdown-menu">
+                            <a href="admin_profile_page.html">
+                                <svg class="icon feather feather-user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                My Profile
+                            </a>
+                            <a href="#">
+                                <svg class="icon feather feather-settings" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                                Settings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button type="button" onclick="window.location.href='login.html'">
+                                <svg class="icon feather feather-log-out" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 id="studentNameDisplay">Student Profile</h1>
+                    <a href="table_page.html" class="btn btn-secondary">
+                        <svg class="feather feather-arrow-left" style="width:16px; height:16px; margin-right: 8px; vertical-align: text-bottom;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        Back to List
+                    </a>
+                </div>
+
+                <div class="student-details-card">
+                    <div class="student-profile-header">
+                        <div class="student-avatar" id="studentAvatar">AS</div> <!-- Initials or Image -->
+                        <div class="student-info-header">
+                            <h2 id="profileFullName">Aarav Sharma</h2>
+                            <p id="profileEmail">aarav.sharma@example.com</p>
+                            <span class="student-id" id="profileStudentId">Student ID: HST2024001</span>
+                        </div>
+                    </div>
+
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <strong>Room Number</strong>
+                            <span id="profileRoomNo">101A</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Phone Number</strong>
+                            <span id="profilePhone">+91 98765 00001</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Joining Date</strong>
+                            <span id="profileJoiningDate">August 15, 2024</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Status</strong>
+                            <span class="status active" id="profileStatus">Active</span>
+                        </div>
+                        <div class="detail-item" style="grid-column: 1 / -1;"> <!-- Span full width -->
+                            <strong>Address</strong>
+                            <span id="profileAddress">123, Sunshine Apartments, MG Road, Bangalore, Karnataka - 560001</span>
+                        </div>
+                         <div class="detail-item">
+                            <strong>Guardian Name</strong>
+                            <span id="profileGuardianName">Mr. Suresh Sharma</span>
+                        </div>
+                         <div class="detail-item">
+                            <strong>Guardian Contact</strong>
+                            <span id="profileGuardianContact">+91 98765 11111</span>
+                        </div>
+
+                    </div>
+
+                    <div class="actions-footer">
+                        <button type="button" class="btn btn-secondary" onclick="window.print()">
+                             <svg class="feather feather-printer" style="width:16px; height:16px; margin-right: 8px; vertical-align: text-bottom;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            Print Details
+                        </button>
+                        <a href="#" id="editStudentLink" class="btn btn-primary">
+                            <svg class="feather feather-edit-2" style="width:16px; height:16px; margin-right: 8px; vertical-align: text-bottom;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                            Edit Student
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        // Dummy data for student - in a real app, this would come from a server based on ID
+        const students = {
+            "1": {
+                id: "HST2024001",
+                fullName: "Aarav Sharma",
+                email: "aarav.sharma@example.com",
+                roomNo: "101A",
+                phone: "+91 98765 00001",
+                joiningDate: "2024-08-15",
+                status: "Active",
+                address: "123, Sunshine Apartments, MG Road, Bangalore, Karnataka - 560001",
+                guardianName: "Mr. Suresh Sharma",
+                guardianContact: "+91 98765 11111",
+                avatarInitial: "AS"
+            },
+            "2": {
+                id: "HST2024002",
+                fullName: "Priya Patel",
+                email: "priya.patel@example.com",
+                roomNo: "205B",
+                phone: "+91 98765 00002",
+                joiningDate: "2024-09-01",
+                status: "Active",
+                address: "456, Park Avenue, Andheri West, Mumbai, Maharashtra - 400058",
+                guardianName: "Mrs. Anjali Patel",
+                guardianContact: "+91 98765 22222",
+                avatarInitial: "PP"
+            },
+             "3": {
+                id: "HST2023003",
+                fullName: "Rohan Das",
+                email: "rohan.das@example.com",
+                roomNo: "301C",
+                phone: "+91 98765 00003",
+                joiningDate: "2023-07-20",
+                status: "Inactive",
+                address: "789, Lake View Residency, Salt Lake, Kolkata, West Bengal - 700091",
+                guardianName: "Mr. Alok Das",
+                guardianContact: "+91 98765 33333",
+                avatarInitial: "RD"
+            },
+            "4": {
+                id: "HST2024004",
+                fullName: "Ananya Singh",
+                email: "ananya.singh@example.com",
+                roomNo: "110A",
+                phone: "+91 98765 00004",
+                joiningDate: "2024-01-10",
+                status: "Active",
+                address: "Flat 12B, Green Valley Towers, Sector 62, Noida, Uttar Pradesh - 201301",
+                guardianName: "Mr. Vikram Singh",
+                guardianContact: "+91 98765 44444",
+                avatarInitial: "AS"
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentId = urlParams.get('id') || "1"; // Default to student 1 if no ID
+        const studentData = students[studentId];
+
+        if (studentData) {
+            document.getElementById('studentNameDisplay').textContent = `${studentData.fullName}'s Profile`;
+            document.getElementById('studentAvatar').textContent = studentData.avatarInitial;
+            // document.getElementById('studentAvatar').style.backgroundImage = `url('path/to/avatar/${studentId}.jpg')`; // If using images
+            document.getElementById('profileFullName').textContent = studentData.fullName;
+            document.getElementById('profileEmail').textContent = studentData.email;
+            document.getElementById('profileStudentId').textContent = `Student ID: ${studentData.id}`;
+            document.getElementById('profileRoomNo').textContent = studentData.roomNo;
+            document.getElementById('profilePhone').textContent = studentData.phone;
+            document.getElementById('profileJoiningDate').textContent = new Date(studentData.joiningDate).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+            const statusEl = document.getElementById('profileStatus');
+            statusEl.textContent = studentData.status;
+            statusEl.className = `status ${studentData.status.toLowerCase()}`;
+            document.getElementById('profileAddress').textContent = studentData.address;
+            document.getElementById('profileGuardianName').textContent = studentData.guardianName;
+            document.getElementById('profileGuardianContact').textContent = studentData.guardianContact;
+            document.getElementById('editStudentLink').href = `add_user_page.html?edit_id=${studentId}`;
+
+        } else {
+            document.getElementById('studentNameDisplay').textContent = 'Student Not Found';
+            document.querySelector('.student-details-card').innerHTML = '<p style="text-align:center; color: var(--text-secondary);">The requested student details could not be found.</p>';
+        }
+    </script>
+</body>
+</html>

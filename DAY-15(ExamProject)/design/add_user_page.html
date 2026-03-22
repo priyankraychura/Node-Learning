@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Student - Hostel Management</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Reusing dashboard layout styles, ideally this would be a template system -->
+    <style>
+        .dashboard-container { display: flex; min-height: 100vh; background-color: var(--primary-bg); }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); padding: 20px; display: flex; flex-direction: column; transition: width 0.3s ease; box-shadow: 2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; }
+        .sidebar.collapsed { width: 80px; }
+        .sidebar.collapsed .sidebar-header .logo-text, .sidebar.collapsed .nav-link-text, .sidebar.collapsed .user-profile-sidebar .user-info { display: none; }
+        .sidebar.collapsed .nav-link { justify-content: center; }
+        .sidebar.collapsed .sidebar-header .logo { margin-right: 0; }
+        .sidebar.collapsed .user-profile-sidebar { padding: 15px 0; }
+        .sidebar.collapsed .user-profile-sidebar .avatar { margin-right: 0; }
+        .sidebar-header { display: flex; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header .logo { width: 40px; height: 40px; background-color: var(--accent-primary); color: var(--sidebar-bg); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius); margin-right: 10px; font-weight: bold; font-size: 1.2rem; }
+        .sidebar-header .logo svg { width: 24px; height: 24px; }
+        .sidebar-header .logo-text { font-size: 1.4rem; font-weight: 600; color: var(--text-primary); }
+        .sidebar-nav { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+        .nav-item { margin-bottom: 10px; }
+        .nav-link { display: flex; align-items: center; padding: 12px 15px; color: var(--text-secondary); border-radius: var(--border-radius); transition: background-color 0.2s ease, color 0.2s ease; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { background-color: var(--accent-primary); color: #fff; }
+        .nav-link.active { background-color: var(--accent-gradient) !important; color: #fff !important; }
+        .nav-link .icon { margin-right: 15px; width: 20px; height: 20px; }
+        .sidebar.collapsed .nav-link .icon { margin-right: 0; }
+        .user-profile-sidebar { margin-top: auto; padding: 15px; border-top: 1px solid var(--border-color); display: flex; align-items: center; }
+        .user-profile-sidebar .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: var(--accent-secondary); margin-right: 10px; background-size: cover; background-position: center; }
+        .user-profile-sidebar .user-info .name { font-weight: 500; color: var(--text-primary); font-size: 0.9rem; }
+        .user-profile-sidebar .user-info .role { font-size: 0.8rem; color: var(--text-secondary); }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--primary-bg); }
+        .header-bar { background-color: var(--header-bg); padding: 0 25px; height: 70px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid var(--border-color); }
+        .header-left .sidebar-toggle-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.5rem; padding: 5px; }
+        .header-left .sidebar-toggle-btn:hover { color: var(--accent-primary); }
+        .header-right { display: flex; align-items: center; }
+        .notification-icon, .profile-dropdown .profile-icon-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.4rem; margin-left: 20px; cursor: pointer; position: relative; padding: 5px; }
+        .notification-icon:hover, .profile-dropdown .profile-icon-btn:hover { color: var(--accent-primary); }
+        .notification-icon .badge { position: absolute; top: 0px; right: 0px; width: 8px; height: 8px; background-color: var(--button-danger-bg); border-radius: 50%; border: 1px solid var(--header-bg); }
+        .profile-dropdown { position: relative; }
+        .profile-avatar { width: 40px; height: 40px; border-radius: 50%; margin-left: 15px; cursor: pointer; background-color: var(--accent-primary); background-size: cover; background-position: center; border: 2px solid var(--border-color); }
+        .dropdown-menu { display: none; position: absolute; top: 60px; right: 0; background-color: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--shadow-md); width: 200px; z-index: 100; border: 1px solid var(--border-color); }
+        .profile-dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-menu a, .dropdown-menu button { display: block; padding: 10px 15px; color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; background: none; border: none; width: 100%; text-align: left; cursor: pointer; }
+        .dropdown-menu a .icon, .dropdown-menu button .icon { margin-right: 10px; width: 16px; height: 16px; }
+        .dropdown-menu a:hover, .dropdown-menu button:hover { background-color: var(--secondary-bg); color: var(--accent-primary); }
+        .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 5px 0; }
+        .page-content { padding: 25px; flex-grow: 1; overflow-y: auto; }
+        .page-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .page-header h1 { font-size: 1.8rem; color: var(--text-primary); margin:0; }
+        .feather { width: 1em; height: 1em; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; vertical-align: middle; }
+
+        /* Form specific styles */
+        .form-container {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+            gap: 20px;
+        }
+        .form-group textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-actions {
+            margin-top: 25px;
+            text-align: right;
+        }
+        .form-actions .btn {
+            min-width: 120px;
+        }
+         .form-actions .btn-secondary {
+            margin-right: 10px;
+            background-color: var(--secondary-bg); /* A less prominent color */
+        }
+        .form-actions .btn-secondary:hover {
+            background-color: #38426e;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </div>
+                <span class="logo-text">HostelPanel</span>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="dashboard_layout.html" class="nav-link">
+                        <svg class="icon feather feather-grid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <span class="nav-link-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="table_page.html" class="nav-link">
+                        <svg class="icon feather feather-users" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span class="nav-link-text">Students</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="add_user_page.html" class="nav-link active">
+                        <svg class="icon feather feather-user-plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="23" y1="11" x2="23" y2="17"></line><line x1="20" y1="14" x2="26" y2="14"></line></svg>
+                        <span class="nav-link-text">Add Student</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg class="icon feather feather-settings" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <span class="nav-link-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="user-profile-sidebar">
+                <div class="avatar" style="background-image: url('https://via.placeholder.com/80/8a2be2/ffffff?text=A');"></div>
+                <div class="user-info">
+                    <span class="name">Admin User</span>
+                    <span class="role">Super Admin</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="header-bar">
+                <div class="header-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle">
+                        <svg class="feather feather-menu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div class="header-right">
+                    <button class="notification-icon">
+                        <svg class="feather feather-bell" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span class="badge"></span>
+                    </button>
+                    <div class="profile-dropdown">
+                        <div class="profile-avatar" style="background-image: url('https://via.placeholder.com/80/00bcd4/1a1f36?text=AU');"></div>
+                        <div class="dropdown-menu">
+                            <a href="admin_profile_page.html">
+                                <svg class="icon feather feather-user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                My Profile
+                            </a>
+                            <a href="#">
+                                <svg class="icon feather feather-settings" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                                Settings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button type="button" onclick="window.location.href='login.html'">
+                                <svg class="icon feather feather-log-out" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 id="formTitle">Add New Student</h1>
+                     <a href="table_page.html" class="btn btn-secondary">
+                        <svg class="feather feather-arrow-left" style="width:16px; height:16px; margin-right: 8px; vertical-align: text-bottom;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        Back to List
+                    </a>
+                </div>
+
+                <div class="form-container">
+                    <form id="studentForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" class="form-control" placeholder="Enter full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" class="form-control" placeholder="Enter email address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="roomNo">Room No.</label>
+                                <input type="text" id="roomNo" class="form-control" placeholder="e.g., 101A, 205B">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" class="form-control" placeholder="Enter phone number">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;"> <!-- Span full width -->
+                                <label for="address">Address</label>
+                                <textarea id="address" class="form-control" placeholder="Enter full address"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="joiningDate">Joining Date</label>
+                                <input type="date" id="joiningDate" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="window.location.href='table_page.html'">Cancel</button>
+                            <button type="submit" class="btn btn-primary">
+                                <svg class="feather feather-save" style="width:16px; height:16px; margin-right: 8px; vertical-align: text-bottom;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                <span id="submitButtonText">Submit Student</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        // Check for edit mode (simple query param check for demo)
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentId = urlParams.get('edit_id');
+        const formTitle = document.getElementById('formTitle');
+        const submitButtonText = document.getElementById('submitButtonText');
+
+        if (studentId) {
+            formTitle.textContent = 'Edit Student Details';
+            submitButtonText.textContent = 'Update Student';
+            // In a real app, fetch student data and populate the form
+            console.log('Editing student with ID:', studentId);
+            // Dummy data for edit mode
+            document.getElementById('fullName').value = 'Priya Patel (Editing)';
+            document.getElementById('email').value = 'priya.patel.edit@example.com';
+            document.getElementById('roomNo').value = '205B';
+            document.getElementById('phone').value = '9876543211';
+            document.getElementById('address').value = '456 Park Avenue, Mumbai';
+            document.getElementById('joiningDate').value = '2024-09-01';
+        }
+
+
+        document.getElementById('studentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Handle form submission (e.g., send data to server)
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                roomNo: document.getElementById('roomNo').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                joiningDate: document.getElementById('joiningDate').value,
+            };
+            if (studentId) {
+                console.log('Updating student data:', formData);
+                alert('Student details updated successfully! (Demo)');
+            } else {
+                console.log('Submitting new student data:', formData);
+                alert('New student added successfully! (Demo)');
+            }
+            // Optionally, redirect or clear form
+            // window.location.href = 'table_page.html';
+        });
+    </script>
+</body>
+</html>

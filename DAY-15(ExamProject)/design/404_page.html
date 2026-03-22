@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Hostel Management</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .not-found-container {
+            max-width: 500px;
+        }
+
+        .not-found-icon {
+            font-size: 6rem; /* Large icon */
+            color: var(--accent-secondary); /* Violet accent */
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+         .not-found-icon svg {
+            width: 100px;
+            height: 100px;
+            stroke-width: 1.5; /* Thinner stroke for a cleaner look */
+        }
+
+
+        .not-found-container h1 {
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .not-found-container .oops {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--accent-primary); /* Cyan accent */
+            margin-bottom: 0px;
+        }
+
+
+        .not-found-container p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .btn-return {
+            padding: 12px 25px;
+            font-size: 1rem;
+        }
+        .feather {
+            width: 1em;
+            height: 1em;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="not-found-container">
+        <div class="not-found-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </div>
+        <h1 class="oops">404</h1>
+        <h1>Page Not Found</h1>
+        <p>Sorry, the page you are looking for does not exist or has been moved. Let's get you back on track.</p>
+        <a href="dashboard_layout.html" class="btn btn-gradient btn-return">
+             <svg class="feather feather-home" style="width:18px; height:18px; margin-right: 8px; vertical-align: text-bottom;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Return to Dashboard
+        </a>
+         <p style="margin-top: 20px; font-size: 0.9rem;">Alternatively, try <a href="login.html">logging in again</a>.</p>
+    </div>
+</body>
+</html>
